@@ -12,20 +12,27 @@ import android.widget.CompoundButton;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
-
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import android.content.Context;
+import android.util.Log;
 import in.celest.xash3d.csdm.R;
 
 public class LauncherActivity extends Activity {
-	// public final static String ARGV = "in.celest.xash3d.MESSAGE";
+	private static final int PAK_VERSION = 1;
+	private static final String TAG = "CSDM_LAUNCHER";
 	static EditText cmdArgs;
-	static SharedPreferences mPref;
+	static SharedPreferences mPref = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
-		mPref = getSharedPreferences("mod", 0);
+        if( mPref == null )
+			mPref = getSharedPreferences("mod", 0);
 		cmdArgs = (EditText)findViewById(R.id.cmdArgs);
 		cmdArgs.setText(mPref.getString("argv","-dev 3 -log"));
+		extractPAK(this, false);
 	}
 
     public void startXash(View view)
@@ -41,6 +48,7 @@ public class LauncherActivity extends Activity {
 		if(cmdArgs.length() != 0) intent.putExtra("argv", cmdArgs.getText().toString());
 		intent.putExtra("gamedir", "csdm");
 		intent.putExtra("gamelibdir", getFilesDir().getAbsolutePath().replace("/files","/lib"));
+		intent.putExtra("pakfile", getFilesDir().getAbsolutePath() + "/extras.pak" );
 		startActivity(intent);
     }
 
@@ -65,4 +73,43 @@ public class LauncherActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+	private static int chmod(String path, int mode) throws Exception {
+		Class fileUtils = Class.forName("android.os.FileUtils");
+		Method setPermissions = fileUtils.getMethod("setPermissions",
+				String.class, int.class, int.class, int.class);
+		return (Integer) setPermissions.invoke(null, path,
+				mode, -1, -1);
+	}
+
+
+	public static void extractPAK(Context context, Boolean force) {
+		InputStream is = null;
+		FileOutputStream os = null;
+		try {
+		if( mPref == null )
+			mPref = context.getSharedPreferences("mod", 0);
+		if( mPref.getInt( "pakversion", 0 ) == PAK_VERSION && !force )
+			return;
+			String path = context.getFilesDir().getPath()+"/extras.pak";
+		
+			is = context.getAssets().open("extras.pak");
+			os = new FileOutputStream(path);
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = is.read(buffer)) > 0) {
+				os.write(buffer, 0, length);
+			}
+			os.close();
+			is.close();
+			SharedPreferences.Editor editor = mPref.edit();
+			editor.putInt( "pakversion", PAK_VERSION );
+			editor.commit();
+			editor.apply();
+			chmod( path, 0644 );
+		} catch( Exception e )
+		{
+			Log.e( TAG, "Failed to extract PAK:" + e.toString() );
+		}
+	}
 }

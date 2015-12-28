@@ -21,5 +21,16 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>-->
+		<receiver android:name=".InstallReceiver">
+			<intent-filter android:priority="100">
+				<category android:name="android.intent.category.DEFAULT" />
+				<action android:name="android.intent.action.PACKAGE_ADDED"  />
+				<action android:name="android.intent.action.PACKAGE_CHANGED" />
+				<action android:name="android.intent.action.PACKAGE_INSTALL" />
+				<action android:name="android.intent.action.PACKAGE_REMOVED" />
+				<action android:name="android.intent.action.PACKAGE_REPLACED" />
+				<data android:scheme="package" />
+			</intent-filter>
+		</receiver>
     </application>
 </manifest> 
