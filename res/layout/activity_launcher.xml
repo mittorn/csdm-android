@@ -20,6 +20,15 @@
 		android:layout_alignParentRight="true"
 		android:onClick="startXash"/>
 
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/shortcut_button"
+		android:id="@+id/button_shortcut"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+		android:onClick="createShortcut"/>
+
 	<EditText
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

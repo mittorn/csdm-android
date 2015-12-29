@@ -49,8 +49,31 @@ public class LauncherActivity extends Activity {
 		intent.putExtra("gamedir", "csdm");
 		intent.putExtra("gamelibdir", getFilesDir().getAbsolutePath().replace("/files","/lib"));
 		intent.putExtra("pakfile", getFilesDir().getAbsolutePath() + "/extras.pak" );
+		/* //Example: you can set custom env.
+		String[] env = {
+			"XASH3D_EXTRAS_PAK1", "",
+			"XASH3D_EXTRAS_PAK2", ""
+		};
+		intent.putExtra("env", env );*/
 		startActivity(intent);
     }
+   
+	public void createShortcut(View view)
+	{
+		Intent intent = new Intent();
+		intent.setAction("in.celest.xash3d.SHORTCUT");
+		intent.putExtra( "name", "CSDM" );
+		intent.putExtra("gamedir", "csdm");
+		intent.putExtra( "argv", cmdArgs.getText().toString() );
+		intent.putExtra( "pkgname", getPackageName() );
+		/* //Example: you can set custom env.
+		String[] env = {
+			"XASH3D_EXTRAS_PAK1", "",
+			"XASH3D_EXTRAS_PAK2", ""
+		};
+		intent.putExtra("env", env );*/
+		startActivity(intent);
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
