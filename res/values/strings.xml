@@ -6,6 +6,7 @@
     <string name="title_activity_launcher">LauncherActivity</string>
     <string name="launch_button">Launch CSDM!</string>
     <string name="shortcut_button">Create shortcut</string>
+    <string name="bots">Enable bots</string>
     <string name="cmd_args_text">Command line arguments(experts only)</string>
     <!--
 	<string name="text_shortcut">SoHL shortcut</string>
