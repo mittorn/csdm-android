@@ -109,12 +109,32 @@ public class LauncherActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-	private static int chmod(String path, int mode) throws Exception {
+	private static int chmod(String path, int mode) {
+		int ret = -1;
+		try
+		{
+		ret = Runtime.getRuntime().exec("chmod " + Integer.toOctalString(mode) + " " + path).waitFor();
+			Log.d(TAG, "chmod " + Integer.toOctalString(mode) + " " + path + ": " + ret );
+		}
+		catch(Exception e) 
+		{
+			ret = -1;
+			Log.d(TAG, "chmod: Runtime not worked: " + e.toString() );
+		}
+		try
+		{
 		Class fileUtils = Class.forName("android.os.FileUtils");
 		Method setPermissions = fileUtils.getMethod("setPermissions",
 				String.class, int.class, int.class, int.class);
-		return (Integer) setPermissions.invoke(null, path,
+		ret = (Integer) setPermissions.invoke(null, path,
 				mode, -1, -1);
+		}
+		catch(Exception e) 
+		{
+			ret = -1;
+			Log.d(TAG, "chmod: FileUtils not worked: " + e.toString() );
+		}
+		return ret;
 	}
 
 	private static void extractFile(Context context, String path) {
